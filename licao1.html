@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa Eletrônico</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .hidden { display: none; }
+        .message { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<h1>Caixa Eletrônico</h1>
+<div id="login">
+    <label for="nome">Digite seu nome:</label>
+    <input type="text" id="nome">
+    <button onclick="obterNome()">Entrar</button>
+</div>
+
+<div id="menu" class="hidden">
+    <h2 id="boas-vindas"></h2>
+    <label for="senha">Digite sua senha:</label>
+    <input type="password" id="senha">
+    <button onclick="validarSenha()">Confirmar</button>
+    
+    <div id="opcoes" class="hidden">
+        <h3>Menu:</h3>
+        <button onclick="mostrarSaldo()">Saldo</button>
+        <button onclick="mostrarExtrato()">Extrato</button>
+        <button onclick="sacar()">Saque</button>
+        <button onclick="depositar()">Depósito</button>
+        <button onclick="transferir()">Transferência</button>
+        <button onclick="sair()">Sair</button>
+    </div>
+</div>
+
+<div class="message" id="message"></div>
+
+<script>
+    let nome;
+    let saldo = 1000;
+    let extrato = [];
+    const senhaCorreta = "3589";
+
+    function obterNome() {
+        nome = document.getElementById("nome").value;
+        if (nome) {
+            document.getElementById("boas-vindas").innerText = `Olá ${nome}, é um prazer ter você por aqui!`;
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("menu").classList.remove("hidden");
+        }
+    }
+
+    function validarSenha() {
+        const senha = document.getElementById("senha").value;
+        if (senha === senhaCorreta) {
+            document.getElementById("opcoes").classList.remove("hidden");
+            document.getElementById("message").innerText = "";
+        } else {
+            document.getElementById("message").innerText = "Senha incorreta. Tente novamente.";
+        }
+    }
+
+    function mostrarSaldo() {
+        const mensagem = `Seu saldo é: R$ ${saldo.toFixed(2)}`;
+        document.getElementById("message").innerText = mensagem;
+    }
+
+    function mostrarExtrato() {
+        if (extrato.length === 0) {
+            document.getElementById("message").innerText = "Nenhuma transação realizada.";
+        } else {
+            document.getElementById("message").innerText = "Extrato:\n" + extrato.join("\n");
+        }
+    }
+
+    function sacar() {
+        const valor = parseFloat(prompt("Digite o valor que deseja sacar:"));
+        if (valor <= 0) {
+            alert("Operação não autorizada.");
+            return;
+        }
+        if (valor > saldo) {
+            alert("Operação não autorizada.");
+            return;
+        }
+        saldo -= valor;
+        extrato.push(`Saque: R$ ${valor.toFixed(2)}`);
+        alert(`Saque realizado com sucesso! Seu novo saldo é: R$ ${saldo.toFixed(2)}`);
+    }
+
+    function depositar() {
+        const valor = parseFloat(prompt("Digite o valor que deseja depositar:"));
+        if (valor <= 0) {
+            alert("Operação não autorizada.");
+            return;
+        }
+        saldo += valor;
+        extrato.push(`Depósito: R$ ${valor.toFixed(2)}`);
+        alert(`Depósito realizado com sucesso! Seu novo saldo é: R$ ${saldo.toFixed(2)}`);
+    }
+
+    function transferir() {
+        const contaDestino = prompt("Digite o número da conta para transferência:");
+        if (!/^\d+$/.test(contaDestino)) {
+            alert("Operação não autorizada. Conta deve conter apenas números.");
+            return;
+        }
+        const valor = parseFloat(prompt("Digite o valor da transferência:"));
+        if (valor <= 0) {
+            alert("Operação não autorizada.");
+            return;
+        }
+        if (valor > saldo) {
+            alert("Operação não autorizada.");
+            return;
+        }
+        saldo -= valor;
+        extrato.push(`Transferência para conta ${contaDestino}: R$ ${valor.toFixed(2)}`);
+        alert(`Transferência realizada com sucesso! Seu novo saldo é: R$ ${saldo.toFixed(2)}`);
+    }
+
+    function sair() {
+        alert(`${nome}, foi um prazer ter você por aqui!`);
+        window.location.reload();
+    }
+</script>
+
+</body>
+</html>
